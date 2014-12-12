@@ -3,10 +3,9 @@
  */
 class Person(val name   : String,
              val id     : Int,
-             val shifts : List[WorkShift]) {
+             days       : List[WorkDay]) {
 
-  def totalSalary : Double = {
-    0d
-  }
-  override def toString: String = f"$id, $name, $totalSalary%.2f"
+  def monthSalary : Double = days.foldLeft(0d)((sum,day) => sum + day.salary)
+
+  override def toString: String = f"$id, $name, $monthSalary%.2f"
 }
