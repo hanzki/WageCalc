@@ -1,11 +1,13 @@
-import org.joda.time.DateTime
+import org.joda.time.{Interval, DateTime}
 
 import scala.math.{max, min}
 
 /**
  * Created by hanzki on 12.12.2014.
  */
-class WorkDay( val date : DateTime, shifts : Traversable[WorkShift]) {
+class WorkDay( val date : DateTime, intervals : Traversable[Interval]) {
+
+  private val shifts = intervals.map(new WorkShift(_))
 
   def hours = shifts.foldLeft(0d)((sum,shift) => sum + shift.hours)
 
