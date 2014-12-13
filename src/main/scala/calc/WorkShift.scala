@@ -1,3 +1,5 @@
+package calc
+
 import org.joda.time.{Duration, Interval}
 
 /**

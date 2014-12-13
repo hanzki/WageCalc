@@ -1,4 +1,6 @@
-import org.joda.time.{LocalDate, Interval}
+package calc
+
+import org.joda.time.{Interval, LocalDate}
 
 import scala.math.{max, min}
 
@@ -26,8 +28,11 @@ class WorkDay(intervals: List[Interval]) {
 }
 
 object WorkDay {
-  private val hourlyWage = 3.75d
-  private val eveningWage = 1.15d
+  val hourlyWage = 3.75d
+  val eveningWage = 1.15d
+  val overtimeBonus1 = hourlyWage * 0.25d
+  val overtimeBonus2 = hourlyWage * 0.50d
+  val overtimeBonus3 = hourlyWage * 1.00d
 
   private def baseSalary(hours: Double) = hours * hourlyWage
 
@@ -37,9 +42,9 @@ object WorkDay {
     otBonus25(ot) + otBonus50(max(0d, ot - 2d)) + otBonus100(max(0d, ot - 4d))
   }
 
-  private def otBonus25(ot: Double) = min(2d, ot) * hourlyWage * 0.25d
+  private def otBonus25(ot: Double) = min(2d, ot) * overtimeBonus1
 
-  private def otBonus50(ot: Double) = min(2d, ot) * hourlyWage * 0.5d
+  private def otBonus50(ot: Double) = min(2d, ot)  * overtimeBonus2
 
-  private def otBonus100(ot: Double) = ot * hourlyWage
+  private def otBonus100(ot: Double) = ot  * overtimeBonus3
 }

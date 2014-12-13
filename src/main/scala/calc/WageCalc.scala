@@ -1,3 +1,5 @@
+package calc
+
 import org.joda.time.Interval
 import org.joda.time.format.DateTimeFormat
 

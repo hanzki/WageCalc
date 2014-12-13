@@ -1,4 +1,6 @@
-import org.joda.time.{YearMonth, Interval}
+package calc
+
+import org.joda.time.{Interval, YearMonth}
 
 /**
  * Created by hanzki on 12.12.2014.
