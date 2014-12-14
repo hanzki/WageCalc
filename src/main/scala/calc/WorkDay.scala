@@ -5,26 +5,45 @@ import org.joda.time.{Interval, LocalDate}
 import scala.math.{max, min}
 
 /**
+ * Class representing the work shifts of a single day. Most of the
+ * salary calculation logic is in this class.
+ * All shifts passed to the constructor have to be from the same day
+ * or an exception is thrown
  * Created by hanzki on 12.12.2014.
  */
 class WorkDay(intervals: List[Interval]) {
-  val day = new LocalDate(intervals.head.getStart)
+  val day: LocalDate = new LocalDate(intervals.head.getStart)
 
   if(!intervals.forall(i => day == new LocalDate(i.getStart)))
     throw new IllegalArgumentException("Not all data was from same day")
 
-  val shifts = intervals.map(new WorkShift(_))
+  val shifts: List[WorkShift] = intervals.map(new WorkShift(_))
 
-  def hours = shifts.foldLeft(0d)((sum, shift) => sum + shift.hours)
+  /**
+   * Number of all work hours during this day including evenings and overtime
+   * @return hour total this day
+   */
+  def hours: Double = shifts.map(_.hours).sum
 
-  def eveningHours = shifts.foldLeft(0d)((sum, shift) => sum + shift.eveningHours)
+  /**
+   * @return number of hours that earn evening bonus
+   */
+  def eveningHours: Double = shifts.map(_.eveningHours).sum
 
-  def overtime = max(0d, hours - 8.0d)
+  /**
+   * Work time that goes over 8 hours per day are counted as overtime
+   * @return number of hours that are counted as overtime
+   */
+  def overtime: Double = max(0d, hours - 8.0d)
 
-  def salary =
+  /**
+   * Total salary from this day including all bonuses
+   * @return total ammount of salary
+   */
+  def salary: Double =
     WorkDay.baseSalary(hours) +
-      WorkDay.eveningBonus(eveningHours) +
-      WorkDay.overtimeBonus(overtime)
+    WorkDay.eveningBonus(eveningHours) +
+    WorkDay.overtimeBonus(hours)
 }
 
 object WorkDay {
@@ -34,17 +53,50 @@ object WorkDay {
   val overtimeBonus2 = hourlyWage * 0.50d
   val overtimeBonus3 = hourlyWage * 1.00d
 
+  /**
+   * Base salary includes only normal hourly wage for each hour worked
+   * @param hours total number of hours
+   * @return ammount of salary
+   */
   private def baseSalary(hours: Double) = hours * hourlyWage
 
+  /**
+   * The evening bonus is counted on top of base salary for hours between 6PM and 6AM
+   * @param eveningHours number of hours during evening bonus
+   * @return ammount of evening bonus not including the base salary
+   */
   private def eveningBonus(eveningHours: Double) = eveningHours * eveningWage
 
-  private def overtimeBonus(ot: Double) = {
-    otBonus25(ot) + otBonus50(max(0d, ot - 2d)) + otBonus100(max(0d, ot - 4d))
+  /**
+   * The overtime bonus is calculated for each hour over 8 each day
+   * @param hours total number of hours
+   * @return ammount of overtime bonus not including base salary or evening bonus
+   */
+  private def overtimeBonus(hours: Double) = {
+    otBonus25(hours) + otBonus50(hours) + otBonus100(hours)
   }
 
-  private def otBonus25(ot: Double) = min(2d, ot) * overtimeBonus1
+  /**
+   * Calculates overtime bonus for the first 2 hours after normal 8 hours.
+   * During this time the bonus equals to 25% of normal hourly wage.
+   * @param hours total number of hours
+   * @return ammount of overtime bonus
+   */
+  private def otBonus25(hours: Double) = if(hours <= 8d) 0d else min(2d, hours-8d) * overtimeBonus1
 
-  private def otBonus50(ot: Double) = min(2d, ot)  * overtimeBonus2
+  /**
+   * Calculates overtime bonus for the first 2 hours after 10 hours.
+   * During this time the bonus equals to 50% of normal hourly wage.
+   * @param hours total number of hours
+   * @return ammount of overtime bonus
+   */
+  private def otBonus50(hours: Double) = if(hours <= 10d) 0d else min(2d, hours-10d) * overtimeBonus2
 
-  private def otBonus100(ot: Double) = ot  * overtimeBonus3
+  /**
+   * Calculates overtime bonus for the time worked after 12 hours.
+   * During this time the bonus equals to 100% of normal hourly wage.
+   * @param hours total number of hours
+   * @return ammount of overtime bonus
+   */
+  private def otBonus100(hours: Double) = if(hours <= 12d) 0d else (hours-12d) * overtimeBonus3
 }
