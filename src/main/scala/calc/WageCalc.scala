@@ -36,11 +36,11 @@ object WageCalc {
    * @return Tuple with (Employee name, Employee Id, Work shift interval)
    */
   def parseCSVLine(line: Array[String]) : (String, Int, Interval) = {
-    val start = DT_FORMAT.parseDateTime(line(2) + '/' + line(3))
-    val end = DT_FORMAT.parseDateTime(line(2) + '/' + line(4))
+    val start = DT_FORMAT.parseDateTime(line(2).trim + '/' + line(3).trim)
+    val end = DT_FORMAT.parseDateTime(line(2).trim + '/' + line(4).trim)
     (
-      line(0),
-      line(1).toInt,
+      line(0).trim,
+      line(1).trim.toInt,
       if(start.isBefore(end)) new Interval(start,end)
       else new Interval(start,end.plusDays(1))
     )
@@ -69,7 +69,7 @@ object WageCalc {
     if(args.length < 1) Console.err.println("Usage: <path to CSV file with work shift information>")
     else
     {
-      val data = parseCSV(args(0)).map(parseCSVLine)
+      val data = parseCSV(args(0)).filter(_.length == 5).map(parseCSVLine)
       val groupedByNameAndId = data.groupBy(d => (d._1, d._2))
 
       val persons = groupedByNameAndId.map{
