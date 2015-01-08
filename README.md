@@ -60,8 +60,6 @@ after that it's base salary * 100%.
 
 Known problems
 -------------------
-* All the monetary variables use Double. A BigDecimal or an Int would be safer 
-but because sums are small and this code is not designed for production I think it's okay.
 * Error handling in code is lacking and most invalid inputs cause a stack trace to appear.
 * There are no checks at the moment for overlapping work shifts of same employee.
 * The code could use more tests

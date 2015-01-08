@@ -40,18 +40,18 @@ class WorkDay(intervals: List[Interval]) {
    * Total salary from this day including all bonuses
    * @return total ammount of salary
    */
-  def salary: Double =
+  def salary: BigDecimal =
     WorkDay.baseSalary(hours) +
     WorkDay.eveningBonus(eveningHours) +
     WorkDay.overtimeBonus(hours)
 }
 
 object WorkDay {
-  val hourlyWage = 3.75d
-  val eveningWage = 1.15d
-  val overtimeBonus1 = hourlyWage * 0.25d
-  val overtimeBonus2 = hourlyWage * 0.50d
-  val overtimeBonus3 = hourlyWage * 1.00d
+  val hourlyWage = BigDecimal(3.75d)
+  val eveningWage = BigDecimal(1.15d)
+  val overtimeBonus1 = hourlyWage * BigDecimal(0.25d)
+  val overtimeBonus2 = hourlyWage * BigDecimal(0.50d)
+  val overtimeBonus3 = hourlyWage * BigDecimal(1.00d)
 
   /**
    * Base salary includes only normal hourly wage for each hour worked
@@ -82,7 +82,7 @@ object WorkDay {
    * @param hours total number of hours
    * @return ammount of overtime bonus
    */
-  private def otBonus25(hours: Double) = if(hours <= 8d) 0d else min(2d, hours-8d) * overtimeBonus1
+  private def otBonus25(hours: Double) = overtimeBonus1 * (if(hours <= 8d) 0d else min(2d, hours-8d))
 
   /**
    * Calculates overtime bonus for the first 2 hours after 10 hours.
@@ -90,7 +90,7 @@ object WorkDay {
    * @param hours total number of hours
    * @return ammount of overtime bonus
    */
-  private def otBonus50(hours: Double) = if(hours <= 10d) 0d else min(2d, hours-10d) * overtimeBonus2
+  private def otBonus50(hours: Double) = overtimeBonus2 * (if(hours <= 10d) 0d else min(2d, hours-10d))
 
   /**
    * Calculates overtime bonus for the time worked after 12 hours.
@@ -98,5 +98,5 @@ object WorkDay {
    * @param hours total number of hours
    * @return ammount of overtime bonus
    */
-  private def otBonus100(hours: Double) = if(hours <= 12d) 0d else (hours-12d) * overtimeBonus3
+  private def otBonus100(hours: Double) = overtimeBonus3 * (if(hours <= 12d) 0d else (hours-12d))
 }

@@ -20,14 +20,14 @@ class Person(val name: String,
   /**
    * @return Sum of salary from all months
    */
-  def totalSalary: Double = months.map(_.salary).sum
+  def totalSalary: BigDecimal = months.map(_.salary).sum
 
   /**
    * Salary from a certain month
    * @param month month which the salary is calculated for
    * @return Salary from specified month or None if employee didn't work during that month
    */
-  def monthSalary(month: YearMonth): Option[Double] =
+  def monthSalary(month: YearMonth): Option[BigDecimal] =
     months.find(_.month == month) collect {case m => m.salary}
 
   /**
@@ -36,7 +36,7 @@ class Person(val name: String,
    * @param month month which the salary is calculated for
    * @return String with employees id, name and month's salary
    */
-  def monthString(month: YearMonth): String = f"$id, $name, $$${monthSalary(month).getOrElse(0d)}%.2f"
+  def monthString(month: YearMonth): String = f"$id, $name, $$${monthSalary(month).map(_.doubleValue()).getOrElse(0d)}%.2f"
 
   override def toString: String = f"$id, $name, $$$totalSalary%.2f"
 

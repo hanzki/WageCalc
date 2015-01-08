@@ -30,15 +30,15 @@ class WorkShift(val interval: Interval) {
   def eveningHours = {
     val thisNightMinutes = Option(thisNight.overlap(interval)) match {
       case Some(ol) => ol.toDuration.getStandardMinutes
-      case None => 0d
+      case None => 0
     }
     val previousNightMinutes = Option(previousNight.overlap(interval)) match {
       case Some(ol) => ol.toDuration.getStandardMinutes
-      case None => 0d
+      case None => 0
     }
     val nextNightMinutes = Option(nextNight.overlap(interval)) match {
       case Some(ol) => ol.toDuration.getStandardMinutes
-      case None => 0d
+      case None => 0
     }
 
     (thisNightMinutes + previousNightMinutes + nextNightMinutes) / 60.0d

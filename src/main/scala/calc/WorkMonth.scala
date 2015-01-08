@@ -16,5 +16,5 @@ class WorkMonth (intervals: List[Interval]) {
 
   val days: List[WorkDay] = intervals.groupBy(_.getStart.getDayOfMonth).map(t => new WorkDay(t._2)).toList
 
-  def salary: Double = days.map(_.salary).sum
+  def salary: BigDecimal = days.map(_.salary).sum
 }
