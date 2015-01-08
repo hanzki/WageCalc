@@ -16,6 +16,7 @@ class WorkShiftSpec extends FlatSpec with Matchers{
     val shiftOverlappingEnd       = makeShift(3,5)
     val shiftOverlappingMidnight  = makeShift(23,3)
     val shiftWholeNight           = makeShift(17,14)
+    val shiftTwoNights            = makeShift(23,20)
 
     shiftEarlyEvening.eveningHours should be (3d)
     shiftEarlyMorning.eveningHours should be (3d)
@@ -23,6 +24,7 @@ class WorkShiftSpec extends FlatSpec with Matchers{
     shiftOverlappingEnd.eveningHours should be (3d)
     shiftOverlappingMidnight.eveningHours should be (3d)
     shiftWholeNight.eveningHours should be (12d)
+    shiftTwoNights.eveningHours should be (8d)
   }
 
   "A shift" should "throw IllegalArgumentException if the shift is over 24h long" in {
